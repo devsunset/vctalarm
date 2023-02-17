@@ -187,7 +187,7 @@ class VctInfo():
         targetMakert_condition = ','.join("'" + item + "'" for item in targetMarket)
         selectVirtualConins = self.getMarkets().query("market_type in ("+targetMakert_condition+")")
 
-        # 2. 대상 코인 상세 정보 조회
+        # 2. 코인 상세 정보 조회
         vcInfo = self.vcInfoData(selectVirtualConins=selectVirtualConins, sort='market')
 
         # 3. 코인에 대한 정보 저장
