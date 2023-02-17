@@ -8,11 +8,9 @@
 ##################################################
 # import
 
-import datetime
 import logging
 import logging.config
 import sqlite3
-import time
 from os import path
 
 import pandas as pd
@@ -39,8 +37,6 @@ comm = common.Common()
 upbitapi = upbitapi.UpbitApi(config.ACCESS_KEY, config.SECRET)
 
 MARKETS  = {}
-
-##################################################
 
 ##################################################
 # biz function
@@ -77,7 +73,7 @@ class VctInfo():
             for data in data_json:       
                 data.setdefault('market_warning', '')         
                 sqlParam.append((data.get('market'),data.get('korean_name'),data.get('english_name'),data.get('market_warning')))
-                MARKETS[data['market']] =  data['korean_name']
+                MARKETS[data['market']] = data['korean_name']
 
             comm.executeTxDB(conn, sqlText, sqlParam)
             conn.commit()
@@ -97,9 +93,78 @@ class VctInfo():
         markets = comm.searchDB("select market,korean_name,english_name,market_warning,substr(market,0,instr(market,'-')) as market_type from vctalarm_meta")
         return markets
 
+        # market monitor
+
     # get ticker markets
     def getTickerMarkets(self,markets):
         return pd.DataFrame(upbitapi.getQuotationTicker(markets))
+
+    def vcInfoData(self, selectVirtualConins, sort='market'):
+        selectMarkets = []
+        markets = selectVirtualConins
+        for i in markets.index:
+                selectMarkets.append(markets['market'][i])
+
+        ###########################################################################################
+        # get ticker market data
+        df = self.getTickerMarkets(selectMarkets).sort_values(by=sort, ascending=False)
+
+        # merge market info & ticker market data
+        df = pd.merge(df, markets, on='market')
+
+        # ------------------------------------------------------------------------
+        # unused filed delete
+        # ticker market data
+        # del df['market']                      # 종목 구분 코드
+        del df['trade_date']                    # 최근 거래 일자(UTC)
+        del df['trade_time']                    # 최근 거래 시각(UTC)
+        # del df['trade_date_kst']              # 최근 거래 일자(KST)
+        # del df['trade_time_kst']              # 최근 거래 시각(KST)
+        # del df['trade_timestamp']             # 최근 거래  타임스탬프
+        # del df['opening_price'] 	            # 시가
+        # del df['high_price'] 	                # 고가
+        # del df['low_price'] 	                # 저가
+        # del df['trade_price'] 	            # 종가
+        # del df['prev_closing_price'] 	        # 전일 종가
+        # del df['change'] 	                    # EVEN : 보합 RISE : 상승 FALL : 하락
+        # del df['change_price']                # 변화액의 절대값
+        # del df['change_rate']                 # 변화율의 절대값
+        # del df['signed_change_price'] 	    # 부호가 있는 변화액
+        # del df['signed_change_rate'] 	        # 부호가 있는 변화율
+        # del df['trade_volume'] 	            # 가장 최근 거래량
+        # del df['acc_trade_price']             # 누적 거래대금(UTC 0시 기준)
+        # del df['acc_trade_price_14h'] 	    # 24시간 누적 거래대금
+        # del df['acc_trade_volume']            # 누적 거래량(UTC 0시 기준)
+        # del df['acc_trade_volume_14h'] 	    # 24시간 누적 거래량
+        del df['highest_52_week_price']         # 52주 신고가
+        del df['highest_52_week_date']          # 52주 신고가 달성일
+        del df['lowest_52_week_price']          # 52주 신저가
+        # del df['lowest_52_week_date']         # 52주 신저가 달성일
+        # del df['timestamp']                   # 타임스탬프
+        # market info
+        # del df['korean_name']
+        # del df['english_name']
+        # del df['market_warning']
+        # del df['market_type']
+        # ------------------------------------------------------------------------
+
+        # column align
+        columns = df.columns.tolist()
+        colalignList = []
+        for colname in columns:
+            if 'change' == colname or 'market_type' == colname or 'market_warning' == colname or colname.find(
+                    '_date') > -1 or colname.find('_time') > -1 or colname.find('_timestamp') > -1:
+                colalignList.append("center")
+            elif 'korean_name' == colname or 'english_name' == colname:
+                colalignList.append("left")
+            else:
+                colalignList.append("right")
+
+        #  tabulate Below are all the styles that you can use :
+        # “plain” “simple” “github” “grid” “fancy_grid” “pipe” “orgtbl” “jira” “presto” “pretty” “psql” “rst” “mediawiki” “moinmoin” “youtrack” “html” “latex” “latex_raw” “latex_booktabs”  “textile”
+        print(tabulate(df, headers='keys', tablefmt='psql', showindex=False, colalign=colalignList))
+
+        return df
 
     # get vctinfo ticks markets
     def getTradesTicksMarket(self,market,count):
@@ -113,103 +178,22 @@ class VctInfo():
     def getCandlesMinutes(self, unit, market, count):
         return pd.DataFrame(upbitapi.getQuotationCandlesMinutes(unit=unit, market=market, count=count))
 
+
     ##########################################################
 
-    # market monitor
-    def monitorMarkets(self, loop=False, looptime=3, sort='signed_change_rate', targetMarket=['KRW','BTC','USDT']):
-        selectMarkets = []
-
-        ### TYPE ONE
-        markets = self.getMarkets()
-        for i in markets.index:
-            if markets['market_type'][i] in targetMarket:
-                selectMarkets.append(markets['market'][i])
-
-        ### TYPE TWO
-        # get continue grows coins
-        # columns = ['opening_price','high_price','low_price','trade_price','candle_acc_trade_price','candle_acc_trade_volume']
-        # columns = ['opening_price','trade_price']
-        # selectMarkets = self.getChoiceGrowsMarkets(columns,3,3,3,3)
-
-        ### TYPE THREE 
-        # selectMarkets.append('KRW-DOGE')
-
-        ###########################################################################################
-        while True:
-            # get ticker market data
-            df = self.getTickerMarkets(selectMarkets).sort_values(by=sort, ascending=False)
-
-            # merge market info & ticker market data
-            df = pd.merge(df, markets, on = 'market')
-
-            # ------------------------------------------------------------------------
-            # unused filed delete
-            # ticker market data
-            # del df['market'] #종목 구분 코드	
-            del df['trade_date'] 	#최근 거래 일자(UTC)	
-            del df['trade_time'] 	#최근 거래 시각(UTC)	
-            del df['trade_date_kst'] 	#최근 거래 일자(KST)	
-            del df['trade_time_kst'] 	#최근 거래 시각(KST)	
-            del df['trade_timestamp'] 	#최근 거래  타임스탬프	
-            # del df['opening_price'] 	#시가	
-            # del df['high_price'] 	#고가	
-            # del df['low_price'] 	#저가	
-            # del df['trade_price'] 	#종가	
-            # del df['prev_closing_price'] 	#전일 종가	
-            # del df['change'] 	#EVEN : 보합 RISE : 상승 FALL : 하락	
-            del df['change_price'] 	#변화액의 절대값	
-            del df['change_rate'] 	#변화율의 절대값	
-            # del df['signed_change_price'] 	#부호가 있는 변화액	
-            # del df['signed_change_rate'] 	#부호가 있는 변화율	
-            # del df['trade_volume'] 	#가장 최근 거래량	
-            del df['acc_trade_price'] 	#누적 거래대금(UTC 0시 기준)	
-            # del df['acc_trade_price_14h'] 	#24시간 누적 거래대금	
-            del df['acc_trade_volume'] 	#누적 거래량(UTC 0시 기준)	
-            # del df['acc_trade_volume_14h'] 	#24시간 누적 거래량	
-            del df['highest_52_week_price'] 	#52주 신고가	
-            del df['highest_52_week_date'] 	#52주 신고가 달성일	
-            del df['lowest_52_week_price'] 	#52주 신저가	
-            del df['lowest_52_week_date'] 	#52주 신저가 달성일	
-            del df['timestamp'] 	#타임스탬프	
-            # market info
-            # del df['korean_name']
-            del df['english_name']
-            del df['market_warning']
-            del df ['market_type']
-            # ------------------------------------------------------------------------
-
-            # column align
-            columns = df.columns.tolist()
-            colalignList = []
-            for colname in columns:
-                if 'change' == colname or 'market_type' == colname or  'market_warning' == colname or colname.find('_date') > -1 or colname.find('_time') > -1 or colname.find('_timestamp') > -1:
-                    colalignList.append("center")
-                elif 'korean_name' == colname or 'english_name' == colname :        
-                    colalignList.append("left")
-                else:
-                    colalignList.append("right")
-
-            #  tabulate Below are all the styles that you can use :
-            # “plain” “simple” “github” “grid” “fancy_grid” “pipe” “orgtbl” “jira” “presto” “pretty” “psql” “rst” “mediawiki” “moinmoin” “youtrack” “html” “latex” “latex_raw” “latex_booktabs”  “textile”
-            print(tabulate(df, headers='keys', tablefmt='psql', showindex=False, colalign=colalignList))
-
-            if(loop == True):
-                time.sleep(looptime)
-            else:
-                break
-
-    # automatic vctinfo
     def vctAlarm(self, targetMarket=['KRW', 'BTC', 'USDT']):
-            selectCoins = []
 
-            # get market info data
-            markets = self.getMarkets()
-            for i in markets.index:
-                if markets['market_type'][i] in targetMarket:
-                    selectCoins.append(markets['market'][i])
+        # 1. 대상 마켓 코인 정보 값 조회
+        targetMakert_condition = ','.join("'" + item + "'" for item in targetMarket)
+        selectVirtualConins = self.getMarkets().query("market_type in ("+targetMakert_condition+")")
 
-            conins_df = pd.DataFrame(selectCoins, columns=['market'])
+        # 2. 대상 코인 상세 정보 조회
+        vcInfo = self.vcInfoData(selectVirtualConins=selectVirtualConins, sort='market')
 
-            print(conins_df)
+        # 3. 코인에 대한 정보 저장
+
+
+
+
 
 
