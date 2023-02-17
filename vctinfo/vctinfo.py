@@ -187,7 +187,8 @@ class VctInfo():
         selectVirtualConins = self.getMarkets().query("market_type in ("+targetMakert_condition+")")
 
         # 2. 코인 상세 정보 조회
-        vcInfo = self.vcInfoData(selectVirtualConins=selectVirtualConins, sort='market')
+        for i in range(40):
+            vcInfo = self.vcInfoData(selectVirtualConins=selectVirtualConins, sort='market')
 
         # 3. 코인에 대한 정보 저장
 
