@@ -166,6 +166,10 @@ class VctInfo():
 
         return df
 
+    # get candles minutes
+    def getCandlesMinutes(self, unit, market, count):
+        return pd.DataFrame(upbitapi.getQuotationCandlesMinutes(unit=unit, market=market, count=count))
+
     # get vctinfo ticks markets
     def getTradesTicksMarket(self,market,count):
         return pd.DataFrame(upbitapi.getQuotationTradesTicks(market=market,count=count))
@@ -173,11 +177,6 @@ class VctInfo():
     # get orderbook
     def getOrderbook(self,markets):
         return pd.DataFrame(upbitapi.getQuotationOrderbook(markets=markets))
-
-    # get candles minutes
-    def getCandlesMinutes(self, unit, market, count):
-        return pd.DataFrame(upbitapi.getQuotationCandlesMinutes(unit=unit, market=market, count=count))
-
 
     ##########################################################
 
