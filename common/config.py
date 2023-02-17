@@ -26,7 +26,6 @@ SECRET = ''
 
 ##################################################
 
-EXECUTE_FUNCTION = 'automaticTrade'
 LOOPTIME = 1
 PERIOD = 30 
 MAX_TRADE_PRICE = 10000

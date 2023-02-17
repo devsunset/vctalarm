@@ -52,18 +52,7 @@ if __name__ == '__main__':
     # moinitor markets info
     # vctalarmtrade.monitorMarkets(loop=False, looptime=5, sort='signed_change_rate', targetMarket=['KRW'])
 
-    # automatic trade one
-    if config.EXECUTE_FUNCTION == 'automaticTrade':
-        vctalarmtrade.automaticTrade(targetMarket=['KRW'])
-
-    # automatic trade two
-    if config.EXECUTE_FUNCTION == 'automaticTradeTest':
-        vctalarmtrade.automaticTradeTest(targetMarket=['KRW'])
-
-
-    ###############################################
-
-    # get candles chart data &  save to db+---
+    # get candles chart data &  save to db
     # vctalarmtrade.loadMarketsCandlesMwdData()
 
     # scheduler = BlockingScheduler()
@@ -72,5 +61,8 @@ if __name__ == '__main__':
     #    scheduler.start()
     # except Exception as err:
     #    logger.error(' main Exception : %s' % e) 
+    
+    # automatic trade one
+    vctalarmtrade.automaticTrade(targetMarket=['KRW'])
 
     
