@@ -134,5 +134,5 @@ BitCatch/
 #db
 db/local.db
 
-*.pic
+*.pyc
 
