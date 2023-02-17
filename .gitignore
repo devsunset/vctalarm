@@ -136,3 +136,6 @@ db/local.db
 
 *.pyc
 
+common/__pycache__/common.cpython-39.pyc
+common/__pycache__/config.cpython-39.pyc
+upbitapi/__pycache__/upbitapi.cpython-39.pyc
