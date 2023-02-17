@@ -9,20 +9,17 @@
 # import
 
 import datetime
-from pandas import DataFrame
-from tabulate import tabulate
-import pandas as pd
-import numpy as np
 import logging
 import logging.config
-from os import path
-import time
-import json
 import sqlite3
-import sys
+import time
+from os import path
 
-from common import config
+import pandas as pd
+from tabulate import tabulate
+
 from common import common
+from common import config
 from upbitapi import upbitapi
 
 ##################################################
