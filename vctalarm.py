@@ -1,42 +1,26 @@
 # -*- coding: utf-8 -*-
 ##################################################
 #
-#          virtual coin vcinfo system
+#          virtual coin  trade alarm
 #
 ##################################################
 
 ##################################################
 # import
-
-import logging.config
-from os import path
-
 from vcinfo import vctinfo
 
 ##################################################
-# constant
-
-# logging config
-log_file_path = path.join(path.dirname(path.abspath(__file__)), 'common/logging.conf')
-logging.config.fileConfig(log_file_path)
-
-# create logger
-logger = logging.getLogger('vctalarm')
-
-# vctalarm_trade,VctAlarmTrade
-vctalarmtrade = vctinfo.VctAlarmTrade()
-
-##################################################
-# biz function
+# vctinfo VctAlarm
+vctalarm = vctinfo.VctAlarm()
 
 #################################################
 # main
 if __name__ == '__main__':
     # moinitor markets info
-    # vctalarmtrade.monitorMarkets(loop=False, looptime=5, sort='signed_change_rate', targetMarket=['KRW'])
+    # vctalarm.monitorMarkets(loop=False, looptime=5, sort='signed_change_rate', targetMarket=['KRW'])
 
     # get candles chart data &  save to db
-    # vctalarmtrade.loadMarketsCandlesMwdData()
+    # vctalarm.loadMarketsCandlesMwdData()
 
     # scheduler = BlockingScheduler()
     # scheduler.add_job(daemon_process, 'interval', seconds=config.INTERVAL_SECONDS)
@@ -45,5 +29,4 @@ if __name__ == '__main__':
     # except Exception as err:
     #    logger.error(' main Exception : %s' % e) 
 
-    # automatic vcinfo one
-    vctalarmtrade.vcTradeInfoAlarm(targetMarket=['KRW'])
+    vctalarm.vcTradeInfoAlarm(targetMarket=['KRW'])

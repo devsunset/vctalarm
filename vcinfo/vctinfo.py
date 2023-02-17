@@ -49,7 +49,7 @@ pd.set_option('display.max_rows', 1000)
 pd.set_option('display.max_columns', 50)
 pd.set_option('display.width', 250)
 
-class VctAlarmTrade():
+class VctAlarm():
     def __init__(self):
         self.loadMarketSaveToDb()
         self.createPumpMarketDb()
