@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 ##################################################
 #
-#          virtual coin trade system
+#          virtual coin vcinfo system
 #
 ##################################################
 
@@ -11,7 +11,7 @@
 import logging.config
 from os import path
 
-from trade import vctalarm_trade
+from vcinfo import vctinfo
 
 ##################################################
 # constant
@@ -24,7 +24,7 @@ logging.config.fileConfig(log_file_path)
 logger = logging.getLogger('vctalarm')
 
 # vctalarm_trade,VctAlarmTrade
-vctalarmtrade = vctalarm_trade.VctAlarmTrade()
+vctalarmtrade = vctinfo.VctAlarmTrade()
 
 ##################################################
 # biz function
@@ -45,5 +45,5 @@ if __name__ == '__main__':
     # except Exception as err:
     #    logger.error(' main Exception : %s' % e) 
 
-    # automatic trade one
+    # automatic vcinfo one
     vctalarmtrade.vcTradeInfoAlarm(targetMarket=['KRW'])

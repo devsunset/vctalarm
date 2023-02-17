@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 ##################################################
 #
-#         vctalarm_trade.py
+#         vctinfo.py
 #
 ##################################################
 
@@ -122,7 +122,7 @@ class VctAlarmTrade():
     def getTickerMarkets(self,markets):
         return pd.DataFrame(upbitapi.getQuotationTicker(markets))
 
-    # get trade ticks markets
+    # get vcinfo ticks markets
     def getTradesTicksMarket(self,market,count):
         return pd.DataFrame(upbitapi.getQuotationTradesTicks(market=market,count=count))
 
@@ -219,7 +219,7 @@ class VctAlarmTrade():
             else:
                 break
 
-    # automatic trade
+    # automatic vcinfo
     def vcTradeInfoAlarm(self, looptime=config.LOOPTIME, period=config.PERIOD, market=None, targetMarket=['KRW', 'BTC', 'USDT'], max_trade_price=config.MAX_TRADE_PRICE):
             # makret + trade_price = 2
             period = period+2

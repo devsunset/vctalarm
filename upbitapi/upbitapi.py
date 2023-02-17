@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime
-import logging
 import hashlib
 import json
+import logging
+import time
+import uuid
+from urllib.parse import urlencode
+
 import jwt
 import requests
-import time
-from urllib.parse import urlencode
-import uuid
+
 
 class UpbitApi():
     """
