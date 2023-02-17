@@ -8,22 +8,18 @@
 ##################################################
 # import
 
-import bs4
-from pandas import DataFrame
 import datetime
-import logging
 import logging.config
-import math
-from os import path
-import random
-import requests
 import sqlite3
-import sys
+from os import path
+
+import bs4
+import requests
 import telegram
-import unicodedata
-import urllib3
+from pandas import DataFrame
 
 from common import config
+
 # import config
 
 ##################################################

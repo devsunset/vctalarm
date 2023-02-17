@@ -223,7 +223,7 @@ class VctAlarmTrade():
                 break
 
     # automatic trade
-    def automaticTrade(self, looptime=config.LOOPTIME, period=config.PERIOD, market=None, targetMarket=['KRW','BTC','USDT'], max_trade_price=config.MAX_TRADE_PRICE):
+    def vcTradeInfoAlarm(self, looptime=config.LOOPTIME, period=config.PERIOD, market=None, targetMarket=['KRW', 'BTC', 'USDT'], max_trade_price=config.MAX_TRADE_PRICE):
             # makret + trade_price = 2
             period = period+2
 

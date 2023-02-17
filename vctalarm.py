@@ -8,20 +8,9 @@
 ##################################################
 # import
 
-import datetime
-from pandas import DataFrame
-from tabulate import tabulate
-import pandas as pd
-import numpy as np
-from apscheduler.schedulers.blocking import BlockingScheduler
-import logging
 import logging.config
 from os import path
-import time
-import json
 
-from common import config
-from common import common
 from trade import vctalarm_trade
 
 ##################################################
@@ -35,7 +24,7 @@ logging.config.fileConfig(log_file_path)
 logger = logging.getLogger('vctalarm')
 
 # vctalarm_trade,VctAlarmTrade
-vctalarmtrade  = vctalarm_trade.VctAlarmTrade()
+vctalarmtrade = vctalarm_trade.VctAlarmTrade()
 
 ##################################################
 # biz function
@@ -55,8 +44,6 @@ if __name__ == '__main__':
     #    scheduler.start()
     # except Exception as err:
     #    logger.error(' main Exception : %s' % e) 
-    
-    # automatic trade one
-    vctalarmtrade.automaticTrade(targetMarket=['KRW'])
 
-    
+    # automatic trade one
+    vctalarmtrade.vcTradeInfoAlarm(targetMarket=['KRW'])
