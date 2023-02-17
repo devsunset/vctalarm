@@ -49,7 +49,7 @@ pd.set_option('display.max_rows', 1000)
 pd.set_option('display.max_columns', 50)
 pd.set_option('display.width', 250)
 
-class VctAlarm():
+class VctInfo():
     def __init__(self):
         self.loadMarketSaveToDb()
         self.createPumpMarketDb()
@@ -122,7 +122,7 @@ class VctAlarm():
     def getTickerMarkets(self,markets):
         return pd.DataFrame(upbitapi.getQuotationTicker(markets))
 
-    # get vcinfo ticks markets
+    # get vctinfo ticks markets
     def getTradesTicksMarket(self,market,count):
         return pd.DataFrame(upbitapi.getQuotationTradesTicks(market=market,count=count))
 
@@ -219,8 +219,8 @@ class VctAlarm():
             else:
                 break
 
-    # automatic vcinfo
-    def vcTradeInfoAlarm(self, looptime=config.LOOPTIME, period=config.PERIOD, market=None, targetMarket=['KRW', 'BTC', 'USDT'], max_trade_price=config.MAX_TRADE_PRICE):
+    # automatic vctinfo
+    def vctAlarm(self, looptime=config.LOOPTIME, period=config.PERIOD, market=None, targetMarket=['KRW', 'BTC', 'USDT'], max_trade_price=config.MAX_TRADE_PRICE):
             # makret + trade_price = 2
             period = period+2
 

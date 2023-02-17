@@ -7,11 +7,9 @@
 
 ##################################################
 # import
-from vcinfo import vctinfo
+from vctinfo import vctinfo
 
-##################################################
-# vctinfo VctAlarm
-vctalarm = vctinfo.VctAlarm()
+vctalarm = vctinfo.VctInfo()
 
 #################################################
 # main
@@ -22,11 +20,4 @@ if __name__ == '__main__':
     # get candles chart data &  save to db
     # vctalarm.loadMarketsCandlesMwdData()
 
-    # scheduler = BlockingScheduler()
-    # scheduler.add_job(daemon_process, 'interval', seconds=config.INTERVAL_SECONDS)
-    # try:
-    #    scheduler.start()
-    # except Exception as err:
-    #    logger.error(' main Exception : %s' % e) 
-
-    vctalarm.vcTradeInfoAlarm(targetMarket=['KRW'])
+    vctalarm.vctAlarm(targetMarket=['KRW'])

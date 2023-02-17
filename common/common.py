@@ -41,6 +41,7 @@ logging.config.fileConfig(log_file_path)
 # create logger
 logger = logging.getLogger('vctalarm')
 
+
 ##################################################
 
 class Common():
@@ -55,35 +56,35 @@ class Common():
             if sqlParam == None:
                 cur.execute(sql)
             else:
-              if str(type(sqlParam)) == "<class 'tuple'>":                    
-                cur.execute(sql, sqlParam)
-              else:
-                cur.executemany(sql,sqlParam)
+                if str(type(sqlParam)) == "<class 'tuple'>":
+                    cur.execute(sql, sqlParam)
+                else:
+                    cur.executemany(sql, sqlParam)
             columns = list(map(lambda x: x[0], cur.description))
             result = cur.fetchall()
             df = DataFrame.from_records(data=result, columns=columns)
         finally:
-          if conn is not None:
-            conn.close()
+            if conn is not None:
+                conn.close()
         return df
 
     # execute sql query - insert/update/delete
     def executeDB(self, sqlText, sqlParam=None, targetDB=TARGET_DB):
         try:
-          conn = sqlite3.connect(targetDB)
-          cur = conn.cursor()
-          sql = sqlText
-          if sqlParam == None:
-              cur.execute(sql)
-          else:
-              if str(type(sqlParam)) == "<class 'tuple'>":    
-                cur.execute(sql, sqlParam)
-              else:
-                cur.executemany(sql,sqlParam)
-          conn.commit()
+            conn = sqlite3.connect(targetDB)
+            cur = conn.cursor()
+            sql = sqlText
+            if sqlParam == None:
+                cur.execute(sql)
+            else:
+                if str(type(sqlParam)) == "<class 'tuple'>":
+                    cur.execute(sql, sqlParam)
+                else:
+                    cur.executemany(sql, sqlParam)
+            conn.commit()
         finally:
-          if conn is not None:
-            conn.close()
+            if conn is not None:
+                conn.close()
         return cur.lastrowid
 
     # search sql query - select
@@ -95,10 +96,10 @@ class Common():
         if sqlParam == None:
             cur.execute(sql)
         else:
-            if str(type(sqlParam)) == "<class 'tuple'>":    
+            if str(type(sqlParam)) == "<class 'tuple'>":
                 cur.execute(sql, sqlParam)
             else:
-                cur.executemany(sql,sqlParam)
+                cur.executemany(sql, sqlParam)
         columns = list(map(lambda x: x[0], cur.description))
         result = cur.fetchall()
         return DataFrame.from_records(data=result, columns=columns)
@@ -110,15 +111,15 @@ class Common():
         if sqlParam == None:
             cur.execute(sql)
         else:
-            if str(type(sqlParam)) == "<class 'tuple'>":    
+            if str(type(sqlParam)) == "<class 'tuple'>":
                 cur.execute(sql, sqlParam)
-            else:   
-                cur.executemany(sql,sqlParam)
+            else:
+                cur.executemany(sql, sqlParam)
         return cur.lastrowid
 
     # telegram message send
     def send_telegram_msg(self, msg):
-        
+
         try:
             # bot.deleteWebhook()
             # try:
@@ -161,21 +162,23 @@ class Common():
             pass
 
         try:
-            resp = requests.get(url, cookies=cookies,verify=False)
+            resp = requests.get(url, cookies=cookies, verify=False)
             html = resp.text
         except Exception as e:
             logger.error(' getHttpsCrawling Exception : %s' % e)
         return html
 
+
 ##################################################
 # main
 if __name__ == '__main__':
     comm = Common()
-    print('* send_telegram_msg : ', comm.send_telegram_msg(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+" : send_telegram_msg"))
+    print('* send_telegram_msg : ',
+          comm.send_telegram_msg(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + " : send_telegram_msg"))
     print()
-    print('* log push_yn -> Y : ', comm.log(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+" : Y", "Y"))
+    print('* log push_yn -> Y : ', comm.log(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + " : Y", "Y"))
     print()
-    print('* log push_yn -> N : ',  comm.log(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+" : N", "N"))
+    print('* log push_yn -> N : ', comm.log(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + " : N", "N"))
     print()
     print('* getCrawling html : ', comm.getCrawling("https://devsunset.github.io/"))
     print()
