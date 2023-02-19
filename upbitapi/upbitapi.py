@@ -218,7 +218,6 @@ class UpbitApi():
         params = {'market': market}
 
         if to is not None:
-            print("#############",to)
             params['to'] = to
 
         if count is not None:
