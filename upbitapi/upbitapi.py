@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime
+import logging
 import hashlib
 import json
-import logging
-import time
-import uuid
-from urllib.parse import urlencode
-
 import jwt
 import requests
-from distributed.profile import identifier
-
+import time
+from urllib.parse import urlencode
+import uuid
 
 class UpbitApi():
     """
@@ -253,7 +251,6 @@ class UpbitApi():
         change_price	전일 종가 대비 변화 금액	Double\n
         change_rate	전일 종가 대비 변화량	Double\n
         converted_trade_price	종가 환산 화폐 단위로 환산된 가격(요청에 convertingPriceUnit 파라미터 없을 시 해당 필드 포함되지 않음.)	Double\n
-
         convertingPriceUnit 파라미터의 경우, 원화 마켓이 아닌 다른 마켓(ex. BTC, ETH)의 일봉 요청시 종가를\n
         명시된 파라미터 값으로 환산해 converted_trade_price 필드에 추가하여 반환합니다.\n
         현재는 원화(KRW) 로 변환하는 기능만 제공하며 추후 기능을 확장할 수 있습니다.
@@ -873,7 +870,6 @@ class UpbitApi():
             - price : 시장가 주문(매수)\n
             - market : 시장가 주문(매도)\n
         identifier string 조회용 사용자 지정 값\n
-
         🚧 원화 마켓 가격 단위를 확인하세요.\n
         원화 마켓에서 주문을 요청 할 경우, 원화 마켓 주문 가격 단위 를 확인하여 값을 입력해주세요.\n
         🚧 identifier 파라미터 사용\n
@@ -1573,9 +1569,7 @@ class UpbitApi():
     def __is_valid_price(self, price):
         '''
             https://docs.upbit.com/docs/market-info-trade-price-detail
-
             원화 마켓은 호가 별 주문 가격의 단위가 다릅니다. 아래 표를 참고하여 해당 단위로 주문하여 주세요.
-
             최소 호가 (이상)	최대 호가 (미만)	주문 가격 단위 (원)
             2,000,000		                                            1,000
             1,000,000	               2,000,000	               500
