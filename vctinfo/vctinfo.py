@@ -95,7 +95,9 @@ class VctInfo():
         markets = comm.searchDB("select market,korean_name,english_name,market_warning,substr(market,0,instr(market,'-')) as market_type from vc_meta")
         return markets
 
-        # market monitor
+    # get ticker markets
+    def getTickerMarkets(self,markets):
+        return pd.DataFrame(upbitapi.getQuotationTicker(markets))
 
     # getVcInfoData
     def getVcInfoData(self, selectVirtualConins, sort='market'):
@@ -147,68 +149,65 @@ class VctInfo():
         # del df['market_type']
         # ------------------------------------------------------------------------
 
-        # column align
-        columns = df.columns.tolist()
-        colalignList = []
-        for colname in columns:
-            if 'change' == colname or 'market_type' == colname or 'market_warning' == colname or colname.find(
-                    '_date') > -1 or colname.find('_time') > -1 or colname.find('_timestamp') > -1:
-                colalignList.append("center")
-            elif 'korean_name' == colname or 'english_name' == colname:
-                colalignList.append("left")
-            else:
-                colalignList.append("right")
+        # # uncomment - data console print
+        # # column align
+        # columns = df.columns.tolist()
+        # colalignList = []
+        # for colname in columns:
+        #     if 'change' == colname or 'market_type' == colname or 'market_warning' == colname or colname.find(
+        #             '_date') > -1 or colname.find('_time') > -1 or colname.find('_timestamp') > -1:
+        #         colalignList.append("center")
+        #     elif 'korean_name' == colname or 'english_name' == colname:
+        #         colalignList.append("left")
+        #     else:
+        #         colalignList.append("right")
 
-        #  tabulate Below are all the styles that you can use :
-        # “plain” “simple” “github” “grid” “fancy_grid” “pipe” “orgtbl” “jira” “presto” “pretty” “psql” “rst” “mediawiki” “moinmoin” “youtrack” “html” “latex” “latex_raw” “latex_booktabs”  “textile”
-        print(tabulate(df, headers='keys', tablefmt='psql', showindex=False, colalign=colalignList))
+        # #  tabulate Below are all the styles that you can use :
+        # # “plain” “simple” “github” “grid” “fancy_grid” “pipe” “orgtbl” “jira” “presto” “pretty” “psql” “rst” “mediawiki” “moinmoin” “youtrack” “html” “latex” “latex_raw” “latex_booktabs”  “textile”
+        # print(tabulate(df, headers='keys', tablefmt='psql', showindex=False, colalign=colalignList))
 
         return df
-
-    # get ticker markets
-    def getTickerMarkets(self,markets):
-        return pd.DataFrame(upbitapi.getQuotationTicker(markets))
-
-    # get vctinfo ticks markets
-    def getTradesTicksMarket(self,market,count):
-        return pd.DataFrame(upbitapi.getQuotationTradesTicks(market=market,count=count))
-
-    # get candles minutes
-    def getCandlesMinutes(self, unit, market, count):
-        return pd.DataFrame(upbitapi.getQuotationCandlesMinutes(unit=unit, market=market, count=count))
-
-    # get orderbook
-    def getOrderbook(self,markets):
-        return pd.DataFrame(upbitapi.getQuotationOrderbook(markets=markets))
 
     ##########################################################
 
     def vcRace(self, targetMarket=['KRW', 'BTC', 'USDT']):
         while True:
             now_time = (datetime.now().strftime('%H%M%S'))
-            print(now_time)
+            # print(now_time)
 
-            # 1. 대상 마켓 코인 정보 조회
-            targetMakert_condition = ','.join("'" + item + "'" for item in targetMarket)
-            selectVirtualConins = self.getMarkets().query("market_type in ("+targetMakert_condition+")")
+            race_status = 0
+            if int(now_time) >= int(config.VC_RACE_CHECK_TIME_START) and int(now_time) <= int(config.VC_RACE_CHECK_TIME_END):
+                logger.info("race ...")
 
-            # 2. 코인 상세 조회
-            vc_race_info = self.getVcInfoData(selectVirtualConins=selectVirtualConins, sort='market')
+                if race_status == 0:
+                    # 1. 대상 마켓 코인 정보 조회
+                    targetMakert_condition = ','.join("'" + item + "'" for item in targetMarket)
+                    selectVirtualConins = self.getMarkets().query("market_type in ("+targetMakert_condition+")")
 
-            # 3. 코인 정보 저장
-            # date_s = (datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f'))
-            date_s = (datetime.now().strftime('%Y%m%d%H%M%S'))
-            # print(date_s)
-            vc_race_info["save_time"] = date_s
-            # print(vc_race_info)
+                # 2. 코인 상세 조회
+                vc_race_info = self.getVcInfoData(selectVirtualConins=selectVirtualConins, sort='market')
 
-            comm.dataframeSaveToSqlite(df=vc_race_info, tablename='vc_race_data')
-            
+                # 3. 코인 정보 저장
+                # date_s = (datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f'))
+                date_s = (datetime.now().strftime('%Y%m%d%H%M%S'))
+                # print(date_s)
+                vc_race_info["save_time"] = date_s
+                # print(vc_race_info)
+
+                comm.dataframeSaveToSqlite(df=vc_race_info, tablename='vc_race_data')
+
+                race_status = race_status+1
+
+            else:
+                if race_status > 0:
+                    race_status = 0
+                    self.vcRaceSummary(selectVirtualConins)
+
             time.sleep(config.VC_RACE_LOOPTIME)
 
-            
 
-
+    def vcRaceSummary(selectVirtualConins):
+        logger.info("vcRaceSummary ...")
 
 
 
