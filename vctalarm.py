@@ -12,5 +12,5 @@ from vctinfo import vctinfo
 #################################################
 # main
 if __name__ == '__main__':
-    vctinfo.VctInfo().vctAlarm(targetMarket=['KRW'])
+    vctinfo.VctInfo().vcRace(targetMarket=['KRW'])
  

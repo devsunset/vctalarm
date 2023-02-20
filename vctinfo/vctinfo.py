@@ -16,6 +16,7 @@ from os import path
 import pandas as pd
 from tabulate import tabulate
 import time
+from datetime import datetime
 
 from common import common
 from common import config
@@ -52,22 +53,22 @@ class VctInfo():
 
     ##########################################################
 
-    # load market info save to db (vctalarm_meta table).
+    # load market info save to db (vc_meta table).
     def loadMarketSaveToDb(self):
         logger.info('loadMarketSaveToDb start')
         data_json = upbitapi.getQuotationMarketAll()
         try:
             conn = sqlite3.connect(TARGET_DB)
             try:
-                sqlText = 'drop table vctalarm_meta'
+                sqlText = 'drop table vc_meta'
                 comm.executeTxDB(conn, sqlText)
             except Exception as e:
                 logging.error(' Exception : %s' % e)
 
-            sqlText = 'create table vctalarm_meta (id integer primary key autoincrement, market text , korean_name text, english_name text, market_warning text)'
+            sqlText = 'create table vc_meta (id integer primary key autoincrement, market text , korean_name text, english_name text, market_warning text)'
             comm.executeTxDB(conn, sqlText)
 
-            sqlText = 'insert into vctalarm_meta  (market,korean_name,english_name,market_warning)'
+            sqlText = 'insert into vc_meta  (market,korean_name,english_name,market_warning)'
             sqlText += ' values (?, ?, ?, ?)'
 
             sqlParam = []
@@ -91,16 +92,13 @@ class VctInfo():
 
     # get markets info
     def getMarkets(self):        
-        markets = comm.searchDB("select market,korean_name,english_name,market_warning,substr(market,0,instr(market,'-')) as market_type from vctalarm_meta")
+        markets = comm.searchDB("select market,korean_name,english_name,market_warning,substr(market,0,instr(market,'-')) as market_type from vc_meta")
         return markets
 
         # market monitor
 
-    # get ticker markets
-    def getTickerMarkets(self,markets):
-        return pd.DataFrame(upbitapi.getQuotationTicker(markets))
-
-    def vcInfoData(self, selectVirtualConins, sort='market'):
+    # getVcInfoData
+    def getVcInfoData(self, selectVirtualConins, sort='market'):
         selectMarkets = []
         markets = selectVirtualConins
         for i in markets.index:
@@ -167,13 +165,17 @@ class VctInfo():
 
         return df
 
-    # get candles minutes
-    def getCandlesMinutes(self, unit, market, count):
-        return pd.DataFrame(upbitapi.getQuotationCandlesMinutes(unit=unit, market=market, count=count))
+    # get ticker markets
+    def getTickerMarkets(self,markets):
+        return pd.DataFrame(upbitapi.getQuotationTicker(markets))
 
     # get vctinfo ticks markets
     def getTradesTicksMarket(self,market,count):
         return pd.DataFrame(upbitapi.getQuotationTradesTicks(market=market,count=count))
+
+    # get candles minutes
+    def getCandlesMinutes(self, unit, market, count):
+        return pd.DataFrame(upbitapi.getQuotationCandlesMinutes(unit=unit, market=market, count=count))
 
     # get orderbook
     def getOrderbook(self,markets):
@@ -181,20 +183,28 @@ class VctInfo():
 
     ##########################################################
 
-    def vctAlarm(self, targetMarket=['KRW', 'BTC', 'USDT']):
-
-        # 1. 대상 마켓 코인 정보 값 조회
-        targetMakert_condition = ','.join("'" + item + "'" for item in targetMarket)
-        selectVirtualConins = self.getMarkets().query("market_type in ("+targetMakert_condition+")")
-
+    def vcRace(self, targetMarket=['KRW', 'BTC', 'USDT']):
         while True:
-            # 2. 코인 상세 정보 조회
-            vcInfo = self.vcInfoData(selectVirtualConins=selectVirtualConins, sort='market')
+            now_time = (datetime.now().strftime('%H%M%S'))
+            print(now_time)
 
-            # 3. 코인에 대한 정보 저장
-            # print(vcInfo)
-            comm.dataframeSaveToSqlite(df=vcInfo, tablename='vctalarm_data')
-            time.sleep(1)
+            # 1. 대상 마켓 코인 정보 조회
+            targetMakert_condition = ','.join("'" + item + "'" for item in targetMarket)
+            selectVirtualConins = self.getMarkets().query("market_type in ("+targetMakert_condition+")")
+
+            # 2. 코인 상세 조회
+            vc_race_info = self.getVcInfoData(selectVirtualConins=selectVirtualConins, sort='market')
+
+            # 3. 코인 정보 저장
+            # date_s = (datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f'))
+            date_s = (datetime.now().strftime('%Y%m%d%H%M%S'))
+            # print(date_s)
+            vc_race_info["save_time"] = date_s
+            # print(vc_race_info)
+
+            comm.dataframeSaveToSqlite(df=vc_race_info, tablename='vc_race_data')
+            
+            time.sleep(config.VC_RACE_LOOPTIME)
 
             
 
