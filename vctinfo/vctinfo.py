@@ -104,10 +104,6 @@ class VctInfo():
         markets = comm.searchDB("select market,korean_name,english_name,market_warning,substr(market,0,instr(market,'-')) as market_type from vc_meta")
         return markets
 
-    # get ticker markets
-    def getTickerMarkets(self,markets):
-        return pd.DataFrame(upbitapi.getQuotationTicker(markets))
-
     # getVcInfoData
     def getVcInfoData(self, selectVirtualConins, sort='market'):
         selectMarkets = []
@@ -117,7 +113,7 @@ class VctInfo():
 
         ###########################################################################################
         # get ticker market data
-        df = self.getTickerMarkets(selectMarkets).sort_values(by=sort, ascending=False)
+        df = pd.DataFrame(upbitapi.getQuotationTicker(selectMarkets)).sort_values(by=sort, ascending=False)
 
         # merge market info & ticker market data
         df = pd.merge(df, markets, on='market')
@@ -177,9 +173,30 @@ class VctInfo():
 
         return df
 
-    # get candles minutes
-    def getCandlesMinutes(self, unit, market, to, count):
-        return pd.DataFrame(upbitapi.getQuotationCandlesMinutes(unit=unit, market=market, to=None, count=count))
+    def vcData(self, vc):
+        count = 200
+        # QUOTATION API
+        ###############################################################
+        # print('■■■■■■■■■■ - QUOTATION API - 시세 캔들 조회 - 분(Minute) 캔들 
+        print(upbitapi.getQuotationCandlesMinutes(1,vc, None, count))
+
+        # print('■■■■■■■■■■ - QUOTATION API - 시세 캔들 조회 - 일(Day) 캔들 
+        # print(upbitapi.getQuotationCandlesDays(vc,None,count,'KRW'))
+
+        # print('■■■■■■■■■■ - QUOTATION API - 시세 캔들 조회 - 주(Week) 캔들
+        # print(upbitapi.getQuotationCandlesWeeks(vc,None,count))
+
+        # print('■■■■■■■■■■ - QUOTATION API - 시세 캔들 조회 - 월(Month) 캔들
+        # print(upbitapi.getQuotationCandlesMonths(vc,None,count))
+
+        # print('■■■■■■■■■■ - QUOTATION API - 시세 체결 조회 - 최근 체결 내역
+        # print(upbitapi.getQuotationTradesTicks(vc,None,count))
+
+        # print('■■■■■■■■■■ - QUOTATION API - 시세 Ticker 조회 - 현재가 정보
+        # print(upbitapi.getQuotationTicker([vc]))
+
+        # print('■■■■■■■■■■ - QUOTATION API - 시세 호가 정보(Orderbook) 조회 - 호가 정보 조회
+        # print(upbitapi.getQuotationOrderbook([vc]))
 
     ##########################################################
 
