@@ -11,7 +11,8 @@
 import logging
 import logging.config
 import sqlite3
-from os import path
+import os
+from os import path,makedirs
 
 import pandas as pd
 from tabulate import tabulate
@@ -53,8 +54,21 @@ class VctInfo():
 
     ##########################################################
 
+
+    def createFolder(directory):
+        print(directory)
+        try:
+            if not path.exists(directory):
+                makedirs(directory)
+        except OSError:
+            print ('Error: Creating directory. ' +  directory)
+
     # load market info save to db (vc_meta table).
     def loadMarketSaveToDb(self):
+        # Check whether the specified
+        # path exists or not
+        self.createFolder(str(os.getcwd())+"/db")
+
         logger.info('loadMarketSaveToDb start')
         data_json = upbitapi.getQuotationMarketAll()
         try:
