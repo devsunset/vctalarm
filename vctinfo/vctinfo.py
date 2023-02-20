@@ -168,6 +168,10 @@ class VctInfo():
 
         return df
 
+    # get candles minutes
+    def getCandlesMinutes(self, unit, market, to, count):
+        return pd.DataFrame(upbitapi.getQuotationCandlesMinutes(unit=unit, market=market, to=None, count=count))
+
     ##########################################################
 
     def vcRace(self, targetMarket=['KRW', 'BTC', 'USDT']):
