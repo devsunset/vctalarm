@@ -15,6 +15,7 @@ from os import path
 
 import pandas as pd
 from tabulate import tabulate
+import time
 
 from common import common
 from common import config
@@ -116,8 +117,8 @@ class VctInfo():
         # unused filed delete
         # ticker market data
         # del df['market']                      # 종목 구분 코드
-        del df['trade_date']                    # 최근 거래 일자(UTC)
-        del df['trade_time']                    # 최근 거래 시각(UTC)
+        # del df['trade_date']                  # 최근 거래 일자(UTC)
+        # del df['trade_time']                  # 최근 거래 시각(UTC)
         # del df['trade_date_kst']              # 최근 거래 일자(KST)
         # del df['trade_time_kst']              # 최근 거래 시각(KST)
         # del df['trade_timestamp']             # 최근 거래  타임스탬프
@@ -136,9 +137,9 @@ class VctInfo():
         # del df['acc_trade_price_14h'] 	    # 24시간 누적 거래대금
         # del df['acc_trade_volume']            # 누적 거래량(UTC 0시 기준)
         # del df['acc_trade_volume_14h'] 	    # 24시간 누적 거래량
-        del df['highest_52_week_price']         # 52주 신고가
-        del df['highest_52_week_date']          # 52주 신고가 달성일
-        del df['lowest_52_week_price']          # 52주 신저가
+        # del df['highest_52_week_price']       # 52주 신고가
+        # del df['highest_52_week_date']        # 52주 신고가 달성일
+        # del df['lowest_52_week_price']        # 52주 신저가
         # del df['lowest_52_week_date']         # 52주 신저가 달성일
         # del df['timestamp']                   # 타임스탬프
         # market info
@@ -186,11 +187,18 @@ class VctInfo():
         targetMakert_condition = ','.join("'" + item + "'" for item in targetMarket)
         selectVirtualConins = self.getMarkets().query("market_type in ("+targetMakert_condition+")")
 
-        # 2. 코인 상세 정보 조회
-        vcInfo = self.vcInfoData(selectVirtualConins=selectVirtualConins, sort='market')
+        while True:
+            # 2. 코인 상세 정보 조회
+            vcInfo = self.vcInfoData(selectVirtualConins=selectVirtualConins, sort='market')
 
-        # 3. 코인에 대한 정보 저장
-        print(vcInfo)
+            # 3. 코인에 대한 정보 저장
+            # print(vcInfo)
+            comm.dataframeSaveToSqlite(df=vcInfo, tablename='vctalarm_data')
+            time.sleep(1)
+
+            
+
+
 
 
 

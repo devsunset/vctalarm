@@ -87,6 +87,18 @@ class Common():
                 conn.close()
         return cur.lastrowid
 
+    # dataframeSaveToSqlite
+    def dataframeSaveToSqlite(self, df, tablename, if_exists='append', targetDB=TARGET_DB):
+        try:
+            conn = sqlite3.connect(targetDB)
+            # if_exists - {‘fail’, ‘replace’, ‘append’}. This parameter determines the behavior if the table exists. 
+            # index - whether to write DataFrame index as a column. The default is True. When it is tru, index_label can be used to customize the column name. 
+            df.to_sql(tablename, conn, schema=None, if_exists=if_exists, index=True, index_label=None, chunksize=None, dtype=None, method=None)
+            # conn.commit()
+        finally:
+            if conn is not None:
+                conn.close()
+
     # search sql query - select
     def searchTxDB(self, conn, sqlText, sqlParam=None):
         columns = []
