@@ -53,10 +53,7 @@ class VctInfo():
         self.loadMarketSaveToDb()
 
     ##########################################################
-
-
-    def createFolder(directory):
-        print(directory)
+    def createFolder(self,directory):
         try:
             if not path.exists(directory):
                 makedirs(directory)
@@ -65,9 +62,7 @@ class VctInfo():
 
     # load market info save to db (vc_meta table).
     def loadMarketSaveToDb(self):
-        # Check whether the specified
-        # path exists or not
-        self.createFolder(str(os.getcwd())+"/db")
+        self.createFolder(os.getcwd()+"/db")
 
         logger.info('loadMarketSaveToDb start')
         data_json = upbitapi.getQuotationMarketAll()
@@ -218,7 +213,6 @@ class VctInfo():
                     self.vcRaceSummary(selectVirtualConins)
 
             time.sleep(config.VC_RACE_LOOPTIME)
-
 
     def vcRaceSummary(selectVirtualConins):
         logger.info("vcRaceSummary ...")
