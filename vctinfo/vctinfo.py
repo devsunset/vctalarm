@@ -176,7 +176,7 @@ class VctInfo():
 
             race_status = 0
             if int(now_time) >= int(config.VC_RACE_CHECK_TIME_START) and int(now_time) <= int(config.VC_RACE_CHECK_TIME_END):
-                logger.info("race ...")
+                logger.info("Race ...")
 
                 if race_status == 0:
                     # 1. 대상 마켓 코인 정보 조회
