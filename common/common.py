@@ -145,12 +145,12 @@ class Common():
             logger.error(' send_telegram_msg Exception : %s' % e)
 
     # log
-    def log(self, msg, push_yn="Y"):
+    def log(self, msg, push_yn="N"):
         if push_yn == 'Y':
             self.send_telegram_msg(msg)
-            logger.warning(msg)
+            logger.info(msg)
         else:
-            logger.warning(msg)
+            logger.info(msg)
 
     # crawling
     def getCrawling(self, url):
