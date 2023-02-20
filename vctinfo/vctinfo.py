@@ -173,7 +173,6 @@ class VctInfo():
     def vcRace(self, targetMarket=['KRW', 'BTC', 'USDT']):
         while True:
             now_time = (datetime.now().strftime('%H%M%S'))
-            # print(now_time)
 
             race_status = 0
             if int(now_time) >= int(config.VC_RACE_CHECK_TIME_START) and int(now_time) <= int(config.VC_RACE_CHECK_TIME_END):
@@ -190,14 +189,11 @@ class VctInfo():
                 # 3. 코인 정보 저장
                 # date_s = (datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f'))
                 date_s = (datetime.now().strftime('%Y%m%d%H%M%S'))
-                # print(date_s)
                 vc_race_info["save_time"] = date_s
-                # print(vc_race_info)
 
                 comm.dataframeSaveToSqlite(df=vc_race_info, tablename='vc_race_data')
 
                 race_status = race_status+1
-
             else:
                 if race_status > 0:
                     race_status = 0
