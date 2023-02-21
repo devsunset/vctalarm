@@ -18,6 +18,7 @@ import pandas as pd
 from tabulate import tabulate
 import time
 from datetime import datetime
+import matplotlib.pyplot as plt
 
 from common import common
 from common import config
@@ -199,6 +200,13 @@ class VctInfo():
         # df = pd.DataFrame(upbitapi.getQuotationOrderbook([vc]))
 
         print(tabulate(df, headers='keys', tablefmt='psql'))
+
+    def vcChart(self, vc):
+        df = comm.searchDB("select * from vc_race_data where market='KRW-TON' and save_time < 2023022109000000")
+        # print(tabulate(df, headers='keys', tablefmt='psql'))
+        df.plot(kind='bar',x='save_time',y='trade_volume')
+        # plt.show()
+        plt.savefig("test.png")
 
     ##########################################################
 

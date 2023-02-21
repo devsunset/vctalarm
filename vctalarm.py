@@ -13,4 +13,6 @@ from vctinfo import vctinfo
 # main
 if __name__ == '__main__':
     # vctinfo.VctInfo().vcRace(targetMarket=['KRW'])
-    vctinfo.VctInfo().vcData('KRW-TON')
+    # vctinfo.VctInfo().vcData('KRW-TON')
+    vctinfo.VctInfo().vcChart('KRW-TON')
+
