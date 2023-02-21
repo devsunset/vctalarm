@@ -178,25 +178,27 @@ class VctInfo():
         # QUOTATION API
         ###############################################################
         # print('■■■■■■■■■■ - QUOTATION API - 시세 캔들 조회 - 분(Minute) 캔들 
-        print(upbitapi.getQuotationCandlesMinutes(1,vc, None, count))
+        df = pd.DataFrame(upbitapi.getQuotationCandlesMinutes(1,vc, None, count))
 
         # print('■■■■■■■■■■ - QUOTATION API - 시세 캔들 조회 - 일(Day) 캔들 
-        # print(upbitapi.getQuotationCandlesDays(vc,None,count,'KRW'))
+        # df = pd.DataFrame((upbitapi.getQuotationCandlesDays(vc,None,count,'KRW')))
 
         # print('■■■■■■■■■■ - QUOTATION API - 시세 캔들 조회 - 주(Week) 캔들
-        # print(upbitapi.getQuotationCandlesWeeks(vc,None,count))
+        # df = pd.DataFrame(upbitapi.getQuotationCandlesWeeks(vc,None,count))
 
         # print('■■■■■■■■■■ - QUOTATION API - 시세 캔들 조회 - 월(Month) 캔들
-        # print(upbitapi.getQuotationCandlesMonths(vc,None,count))
+        # df = pd.DataFrame(upbitapi.getQuotationCandlesMonths(vc,None,count))
 
         # print('■■■■■■■■■■ - QUOTATION API - 시세 체결 조회 - 최근 체결 내역
-        # print(upbitapi.getQuotationTradesTicks(vc,None,count))
+        # df = pd.DataFrame(upbitapi.getQuotationTradesTicks(vc,None,count))
 
         # print('■■■■■■■■■■ - QUOTATION API - 시세 Ticker 조회 - 현재가 정보
-        # print(upbitapi.getQuotationTicker([vc]))
+        # df = pd.DataFrame(upbitapi.getQuotationTicker([vc]))
 
         # print('■■■■■■■■■■ - QUOTATION API - 시세 호가 정보(Orderbook) 조회 - 호가 정보 조회
-        # print(upbitapi.getQuotationOrderbook([vc]))
+        # df = pd.DataFrame(upbitapi.getQuotationOrderbook([vc]))
+
+        print(tabulate(df, headers='keys', tablefmt='psql'))
 
     ##########################################################
 
