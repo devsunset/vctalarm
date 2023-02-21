@@ -19,6 +19,8 @@ from tabulate import tabulate
 import time
 from datetime import datetime
 import matplotlib.pyplot as plt
+import matplotlib
+# matplotlib.use('Qt5Agg')
 
 from common import common
 from common import config
@@ -202,11 +204,11 @@ class VctInfo():
         print(tabulate(df, headers='keys', tablefmt='psql'))
 
     def vcChart(self, vc):
-        df = comm.searchDB("select * from vc_race_data where market='KRW-TON' and save_time < 2023022109000000")
+        df = comm.searchDB("select * from vc_race_data where market='KRW-TON'")
         # print(tabulate(df, headers='keys', tablefmt='psql'))
         df.plot(kind='bar',x='save_time',y='trade_volume')
-        # plt.show()
-        plt.savefig("test.png")
+        plt.show()
+        # plt.savefig("test.png")
 
     ##########################################################
 
