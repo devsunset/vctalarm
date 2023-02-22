@@ -200,15 +200,27 @@ class VctInfo():
 
         # print('■■■■■■■■■■ - QUOTATION API - 시세 호가 정보(Orderbook) 조회 - 호가 정보 조회
         # df = pd.DataFrame(upbitapi.getQuotationOrderbook([vc]))
-
+        ###############################################################
         print(tabulate(df, headers='keys', tablefmt='psql'))
 
     def vcChart(self, vc):
-        df = comm.searchDB("select * from vc_race_data where market='KRW-TON'")
+        df = comm.searchDB("select * from vc_race_data where market ='"+vc+"'")
         # print(tabulate(df, headers='keys', tablefmt='psql'))
         df.plot(kind='bar',x='save_time',y='trade_volume')
         plt.show()
         # plt.savefig("test.png")
+
+    def vcAnalyze(self,date):
+        print(date)
+        targetMarket = ['KRW']
+        targetMakert_condition = ','.join("'" + item + "'" for item in targetMarket)
+        selectVirtualConins = self.getMarkets().query("market_type in ("+targetMakert_condition+")")
+
+        for i in selectVirtualConins.index:
+            print(selectVirtualConins['market'][i],selectVirtualConins['korean_name'][i],)
+            data = comm.searchDB("select * from vc_race_data where market ='"+selectVirtualConins['market'][i]+"' and save_time between "+date+"085900 and "+date+"090000 order by save_time asc")
+            print(tabulate(data, headers='keys', tablefmt='psql'))
+            break
 
     ##########################################################
 
