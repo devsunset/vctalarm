@@ -206,25 +206,16 @@ class VctInfo():
     def vcChart(self, vc):
         df = comm.searchDB("select * from vc_race_data where market ='"+vc+"'")
         # print(tabulate(df, headers='keys', tablefmt='psql'))
-        df.plot(kind='bar',x='save_time',y='trade_volume')
+        df.plot(kind='bar',x='save_time',y='trade_price')
         plt.show()
         # plt.savefig("test.png")
 
-    def vcAnalyze(self,date):
-        targetMarket = ['KRW']
+    def vcAnalyze(self, date, targetMarket=['KRW', 'BTC', 'USDT']):
         targetMakert_condition = ','.join("'" + item + "'" for item in targetMarket)
         selectVirtualConins = self.getMarkets().query("market_type in ("+targetMakert_condition+")")
 
         for i in selectVirtualConins.index:
             data = comm.searchDB("select * from vc_race_data where market ='"+selectVirtualConins['market'][i]+"' and save_time between "+date+"085900 and "+date+"090000 order by save_time asc")
-            # print(tabulate(data, headers='keys', tablefmt='psql'))
-
-            # print(selectVirtualConins['market'][i]
-            # ,selectVirtualConins['korean_name'][i]
-            # ,float(data['acc_trade_price'][0])
-            # ,float(data['acc_trade_price'][len(data)-1])
-            # ,((float(data['acc_trade_price'][len(data)-1])  -  float(data['acc_trade_price'][0])) / float(data['acc_trade_price'][0])  * 100)
-            # )
 
     ##########################################################
 
