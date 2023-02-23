@@ -13,7 +13,7 @@ from vctinfo import vctinfo
 # main
 if __name__ == '__main__':
     vctinfo.VctInfo().vcMonitoring(targetMarket=['KRW'])
-    vctinfo.VctInfo().vcUpbitApiCall('KRW-BTC')
-    vctinfo.VctInfo().vcChart('KRW-BTC')
-    vctinfo.VctInfo().vcData('20230221', targetMarket=['KRW'])
+    # vctinfo.VctInfo().vcUpbitApiCall('KRW-BTC')
+    # vctinfo.VctInfo().vcData(targetMarket=['KRW'])
+    # vctinfo.VctInfo().vcChart('KRW-BTC')
 

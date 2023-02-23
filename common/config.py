@@ -21,9 +21,12 @@ ACCESS_KEY=''
 SECRET = ''
 
 # vc data save period (seconds)
-VC_DATA_SAVE_PERIOD_LOOPTIME = 1
+VC_DATA_SAVE_PERIOD = 1
+
+# vc data Analysis period (count - VC_DATA_SAVE_PERIOD reference)
+VC_DATA_ANALYSIS_PERIOD = 60
 
 # vc data delete flag
-VC_DATA_DELETE_FLAG = True
+VC_DATA_DELETE_FLAG = False
 
 

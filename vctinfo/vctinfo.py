@@ -202,21 +202,20 @@ class VctInfo():
         ###############################################################
         print(tabulate(df, headers='keys', tablefmt='psql'))
 
-    def vcData(self, date, targetMarket=['KRW', 'BTC', 'USDT']):
+    def vcData(self,targetMarket=['KRW', 'BTC', 'USDT']):
         targetMakert_condition = ','.join("'" + item + "'" for item in targetMarket)
         selectVirtualConins = self.getMarkets().query("market_type in ("+targetMakert_condition+")")
 
         for i in selectVirtualConins.index:
             data = comm.searchDB("select * from vc_data where market ='"+selectVirtualConins['market'][i]+"' order by save_time asc")
-            print(data)
+            print(tabulate(data, headers='keys', tablefmt='psql'))
 
     def vcChart(self, vc):
         df = comm.searchDB("select * from vc_data where market ='"+vc+"'")
         # print(tabulate(df, headers='keys', tablefmt='psql'))
-        df.plot(kind='bar',x='save_time',y='trade_price')
+        df.plot(kind='bar',x='save_time',y='trade_volume')
         plt.savefig("vcChart.png")
         # plt.show()
-        
 
     ##########################################################
 
@@ -228,6 +227,7 @@ class VctInfo():
         selectVirtualConins = self.getMarkets().query("market_type in ("+targetMakert_condition+")")
 
         while True:
+            logger.info("vcMonitoring  : "+ str(check_count))
             # 2. 코인 상세 조회
             vc_data_info = self.getVcInfoData(selectVirtualConins=selectVirtualConins, sort='market')
 
@@ -243,10 +243,10 @@ class VctInfo():
             if check_count % 60 == 0:
                 self.vcDataAnalysis(selectVirtualConins)
 
-            time.sleep(config.VC_DATA_SAVE_PERIOD_LOOPTIME)
+            time.sleep(config.VC_DATA_SAVE_PERIOD)
 
-    def vcDataAnalysis(selectVirtualConins):
-        logger.info("vcDataAnalysis ...")
+    def vcDataAnalysis(self,selectVirtualConins):
+        logger.info("vcDataAnalysis ....................................")
         
         if config.VC_DATA_DELETE_FLAG:
             comm.executeDB("delete from vc_data")
