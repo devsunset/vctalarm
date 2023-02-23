@@ -20,11 +20,5 @@ ACCESS_KEY=''
 # secret
 SECRET = ''
 
-# vc race info save time seconds
-VC_RACE_LOOPTIME = 1
-
-# vc race check period time
-VC_RACE_CHECK_TIME_START = '085900'
-VC_RACE_CHECK_TIME_END = '090500'
-# VC_RACE_CHECK_TIME_START = '132000'
-# VC_RACE_CHECK_TIME_END = '132030'
+# vc data save period (seconds)
+VC_DATA_SAVE_PERIOD_LOOPTIME = 1

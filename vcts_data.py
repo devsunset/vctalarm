@@ -12,8 +12,8 @@ from vctinfo import vctinfo
 #################################################
 # main
 if __name__ == '__main__':
-    # vctinfo.VctInfo().vcRace(targetMarket=['KRW'])
-    # vctinfo.VctInfo().vcData('KRW-TON')
-    # vctinfo.VctInfo().vcChart('KRW-TON')
-    vctinfo.VctInfo().vcAnalyze('20230221', targetMarket=['KRW'])
+    vctinfo.VctInfo().vcMonitoring(targetMarket=['KRW'])
+    vctinfo.VctInfo().vcUpbitApiCall('KRW-BTC')
+    vctinfo.VctInfo().vcChart('KRW-BTC')
+    vctinfo.VctInfo().vcData('20230221', targetMarket=['KRW'])
 

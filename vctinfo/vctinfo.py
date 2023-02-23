@@ -19,8 +19,6 @@ from tabulate import tabulate
 import time
 from datetime import datetime
 import matplotlib.pyplot as plt
-import matplotlib
-# matplotlib.use('Qt5Agg')
 
 from common import common
 from common import config
@@ -37,7 +35,7 @@ log_file_path = path.join(path.abspath(path.dirname(path.abspath(path.dirname(__
 logging.config.fileConfig(log_file_path)
 
 # create logger
-logger = logging.getLogger('vctalarm')
+logger = logging.getLogger('vcts_data')
 
 comm = common.Common()
 upbitapi = upbitapi.UpbitApi(config.ACCESS_KEY, config.SECRET)
@@ -176,7 +174,7 @@ class VctInfo():
 
         return df
 
-    def vcData(self, vc):
+    def vcUpbitApiCall(self, vc):
         count = 200
         # QUOTATION API
         ###############################################################
@@ -203,55 +201,52 @@ class VctInfo():
         ###############################################################
         print(tabulate(df, headers='keys', tablefmt='psql'))
 
-    def vcChart(self, vc):
-        df = comm.searchDB("select * from vc_race_data where market ='"+vc+"'")
-        # print(tabulate(df, headers='keys', tablefmt='psql'))
-        df.plot(kind='bar',x='save_time',y='trade_price')
-        plt.show()
-        # plt.savefig("test.png")
-
-    def vcAnalyze(self, date, targetMarket=['KRW', 'BTC', 'USDT']):
+    def vcData(self, date, targetMarket=['KRW', 'BTC', 'USDT']):
         targetMakert_condition = ','.join("'" + item + "'" for item in targetMarket)
         selectVirtualConins = self.getMarkets().query("market_type in ("+targetMakert_condition+")")
 
         for i in selectVirtualConins.index:
-            data = comm.searchDB("select * from vc_race_data where market ='"+selectVirtualConins['market'][i]+"' and save_time between "+date+"085900 and "+date+"090000 order by save_time asc")
+            data = comm.searchDB("select * from vc_data where market ='"+selectVirtualConins['market'][i]+"' order by save_time asc")
+            print(data)
+
+    def vcChart(self, vc):
+        df = comm.searchDB("select * from vc_data where market ='"+vc+"'")
+        # print(tabulate(df, headers='keys', tablefmt='psql'))
+        df.plot(kind='bar',x='save_time',y='trade_price')
+        plt.savefig("vcChart.png")
+        # plt.show()
+        
 
     ##########################################################
 
-    def vcRace(self, targetMarket=['KRW', 'BTC', 'USDT']):
+    def vcMonitoring(self, targetMarket=['KRW', 'BTC', 'USDT']):
+        check_count = 0
+
+        # 1. 대상 마켓 코인 정보 조회
+        targetMakert_condition = ','.join("'" + item + "'" for item in targetMarket)
+        selectVirtualConins = self.getMarkets().query("market_type in ("+targetMakert_condition+")")
+
         while True:
-            now_time = (datetime.now().strftime('%H%M%S'))
+            # 2. 코인 상세 조회
+            vc_data_info = self.getVcInfoData(selectVirtualConins=selectVirtualConins, sort='market')
 
-            race_status = 0
-            if int(now_time) >= int(config.VC_RACE_CHECK_TIME_START) and int(now_time) <= int(config.VC_RACE_CHECK_TIME_END):
-                logger.info("Race ...")
+            # 3. 코인 정보 저장
+            # date_s = (datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f'))
+            date_s = (datetime.now().strftime('%Y%m%d%H%M%S'))
+            vc_data_info["save_time"] = date_s
 
-                if race_status == 0:
-                    # 1. 대상 마켓 코인 정보 조회
-                    targetMakert_condition = ','.join("'" + item + "'" for item in targetMarket)
-                    selectVirtualConins = self.getMarkets().query("market_type in ("+targetMakert_condition+")")
+            comm.dataframeSaveToSqlite(df=vc_data_info, tablename='vc_data')
 
-                # 2. 코인 상세 조회
-                vc_race_info = self.getVcInfoData(selectVirtualConins=selectVirtualConins, sort='market')
+            check_count = check_count+1
 
-                # 3. 코인 정보 저장
-                # date_s = (datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f'))
-                date_s = (datetime.now().strftime('%Y%m%d%H%M%S'))
-                vc_race_info["save_time"] = date_s
+            if check_count % 60 == 0:
+                self.vcDataAnalysis(selectVirtualConins)
 
-                comm.dataframeSaveToSqlite(df=vc_race_info, tablename='vc_race_data')
+            time.sleep(config.VC_DATA_SAVE_PERIOD_LOOPTIME)
 
-                race_status = race_status+1
-            else:
-                if race_status > 0:
-                    race_status = 0
-                    self.vcRaceSummary(selectVirtualConins)
-
-            time.sleep(config.VC_RACE_LOOPTIME)
-
-    def vcRaceSummary(selectVirtualConins):
-        logger.info("vcRaceSummary ...")
+    def vcDataAnalysis(selectVirtualConins):
+        logger.info("vcDataAnalysis ...")
+        comm.executeDB("delete from vc_data")
 
 
 
