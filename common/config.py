@@ -22,3 +22,8 @@ SECRET = ''
 
 # vc data save period (seconds)
 VC_DATA_SAVE_PERIOD_LOOPTIME = 1
+
+# vc data delete flag
+VC_DATA_DELETE_FLAG = True
+
+

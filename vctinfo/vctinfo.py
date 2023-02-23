@@ -54,6 +54,7 @@ class VctInfo():
         self.loadMarketSaveToDb()
 
     ##########################################################
+    # create folder 
     def createFolder(self,directory):
         try:
             if not path.exists(directory):
@@ -246,7 +247,9 @@ class VctInfo():
 
     def vcDataAnalysis(selectVirtualConins):
         logger.info("vcDataAnalysis ...")
-        comm.executeDB("delete from vc_data")
+        
+        if config.VC_DATA_DELETE_FLAG:
+            comm.executeDB("delete from vc_data")
 
 
 
